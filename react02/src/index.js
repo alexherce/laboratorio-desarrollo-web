@@ -1,59 +1,36 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-let gasStation = {
-  name: "Gas Interlomas",
-  brand: "Shell",
-  price: 12.90,
-  comments: [1,2,3,4,234,345,15623]
-}
+var displayImg = false;
 
-let counter = 0;
-
-const showPrice = () => {
-  if(!gasStation.price)
-    return "";
-  else
-    return '<p>{gasStation.price}</p>';
-};
-
-const addOne = () => {
-  console.log("add one");
-  counter++;
-  render();
-};
-
-const onFormSubmit = (e) => {
-  e.preventDefault();
-  console.log("onFormSubmit");
-  const comment = e.target.elements.comment.value;
-  if(comment) {
-    gasStation.comments.push(comment);
-    e.target.elements.comment.value = "";
-    render();
+const imageDisplay = () => {
+  if (displayImg === true) {
+    return (<img src="http://ksassets.timeincuk.net/wp/uploads/sites/46/2016/06/obama-1.gif" alt="lol"/>);
+  } else {
+    return null;
   }
 };
 
+const displayChange = () => {
+  if (displayImg === true)
+    displayImg = false;
+  else
+    displayImg = true;
+
+  renderPage();
+};
 
 const renderPage = () => {
   const template = (
     <div>
-      <h3>{gasStation.name}</h3>
-      <ul>
-        {(gasStation.brand && gasStation.brand == "Shell") && <li>Brand: {gasStation.brand}</li>}
-      </ul>
-      {showPrice()}
-      <p>Counter: {counter}</p>
-      <button id="12" className="myClass" onClick={addOne}>+1</button>
-      <p>{gasStation.comments.length > 0 ? 'Comentarios: ' : 'Sin comentarios'}</p>
-      {gasStation.comments}
-      <form onSubmit={onFormSubmit}>
-        <input type="text" name="comment"></input>
-        <button>Agregar comentario</button>
-      </form>
+      <button id="12" className="myClass" onClick={displayChange}>Show/Hide</button>
+      <div>{imageDisplay()}</div>
     </div>
   );
-  ReactDOM.render(template, document.getElementById('app'));
+
+  render(template, appRoot);
 }
+
+const appRoot = document.getElementById('app');
 
 renderPage();
