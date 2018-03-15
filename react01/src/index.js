@@ -1,84 +1,110 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-var gasStation = {
-  name: "Gas Interlomas",
-  brand: "Shell",
-  price: 12.90,
-  comments: ["hola", "mundo"]
+class MyApp extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      array: ["test1", "test2", "test3"],
+      test: "hola"
+    };
+  }
+
+  pushToArray = (element) => {
+    var updateArray = this.state.array;
+    updateArray.push(element);
+
+    //this.state.array.push(element);
+    //render(<MyApp/>, document.getElementById("app"));
+
+    this.setState({array: updateArray});
+  };
+
+  render() {
+    const info = {
+      title: "TITLE",
+      subtitle: "Hola"
+    }
+
+    return(
+      <div>
+        <Header info={info}/>
+        <Action/>
+        <p>{this.state.test}</p>
+        <Options array={this.state.array} fn={this.pushToArray}/>
+      </div>
+    );
+  }
 }
 
-let counter = 0;
+class Options extends React.Component {
 
-const showPrice = () => {
-  if(!gasStation.price)
-  return "";
-  else
-  return <p>{gasStation.price}</p>;
-};
-
-const addOne = () => {
-  console.log("add one");
-  counter++;
-  renderPage();
-};
-
-const deleteComment = (e) => {
-  const index = e.target.id;
-  if(index !== undefined && index > -1) {
-    gasStation.comments.splice(index, 1);
-    renderPage();
+  submitForm = (e) => {
+    e.preventDefault();
+    var textoTmp = e.target.texto.value;
+    if (textoTmp !== "" && textoTmp.replace(/\s/g,"") !== "") {
+      alert(e.target.texto.value);
+      this.props.fn(e.target.texto.value);
+    }
   }
-};
 
-const onFormSubmit = (e) => {
-  e.preventDefault();
-  const comment = e.target.elements.comment.value;
-  if(comment !== undefined) {
-    gasStation.comments.push(comment);
-    e.target.elements.comment.value = "";
-    renderPage();
+  render() {
+    var array = this.props.array;
+    var rows = [];
+
+    for (var i = 0; i < array.length; i++) {
+      rows.push(<Option array={array} key={i} indx={i} />);
+    }
+
+    return (
+      <div>
+        <form onSubmit={this.submitForm}>
+          <input type="text" id="texto"></input>
+          <button>Send</button>
+        </form>
+        <br/><br/>
+        <h2>Arreglo:</h2>
+        {rows}
+      </div>
+    );
   }
-};
-
-
-const renderPage = () => {
-  const template = (
-    <div>
-      <div className="row">
-        <div className="col-lg-12">
-          {gasStation.brand && gasStation.brand === "Shell" && <h2>{gasStation.brand}</h2>}
-          <h4>{gasStation.name}</h4>
-          {showPrice()}
-          <p>Counter: {counter}</p>
-          <button id="12" className="btn btn-primary" onClick={addOne}>Add One</button>
-        </div>
-      </div>
-
-      <div className="row mt-3">
-        <div className="col-lg-12">
-          <p>{gasStation.comments.length > 0 ? 'Comentarios: ' : 'Sin comentarios'}</p>
-          <ul className="list-group">
-            {gasStation.comments.map((object:string,i:number)=>{
-              return <li className="list-group-item" key={i} id={i}>{object} <button id={i} className="btn btn-danger btn-sm float-right" onClick={deleteComment}>X</button></li>
-            })}
-          </ul>
-        </div>
-      </div>
-
-      <div className="form-group row mt-3">
-        <div className="col-lg-12">
-          <form onSubmit={onFormSubmit}>
-            <ul className="list-group">
-              <li className="list-group-item"><input type="text" className="form-control" name="comment" id="comment"></input></li>
-              <li className="list-group-item"><button className="btn btn-success form-control">Agregar comentario</button></li>
-            </ul>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-  render(template, document.getElementById('app'));
 }
 
-renderPage();
+class Option extends React.Component {
+  deleteButton = (e) => {
+    alert(e.target.id);
+  }
+
+  render() {
+    return(
+      <div>
+        <p id={this.props.indx}>{this.props.array[this.props.indx]}</p>
+        <button onClick={this.deleteButton} id={this.props.array[this.props.indx]}>Borrar</button>
+      </div>
+    );
+  }
+}
+
+class Header extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>{this.props.info.title}</h1>
+        <h2>{this.props.info.subtitle}</h2>
+      </div>
+    );
+  }
+}
+
+class Action extends React.Component {
+  render() {
+    return (
+      <div>
+        <button>Pick option</button>
+      </div>
+    );
+  }
+}
+
+render(<MyApp/>, document.getElementById("app"));
